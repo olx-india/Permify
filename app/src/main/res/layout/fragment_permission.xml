@@ -25,6 +25,4 @@
         android:text="Open File"
         android:textColor="@color/white"
         android:textSize="30sp" />
-
-
 </LinearLayout>

@@ -61,7 +61,6 @@ class PermissionDeniedDialog(
         } else {
             negativeBtn.visibility = View.GONE
         }
-
     }
 
     private fun setupWindow() {
