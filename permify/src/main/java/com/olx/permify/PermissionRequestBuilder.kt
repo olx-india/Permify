@@ -25,7 +25,6 @@ class PermissionRequestBuilder(
 
     var forwardPermissions: MutableSet<String> = LinkedHashSet()
 
-
     fun setPermissionRequestMessage(requestMessage: String): PermissionRequestBuilder {
         this.requestMessage = requestMessage
         return this
@@ -52,7 +51,7 @@ class PermissionRequestBuilder(
     }
 
     private fun validateBuilderState() {
-        if (requestMessage?.isEmpty() == true) {
+        if (requestMessage.isNullOrEmpty()) {
             throw IllegalStateException("Permissions must be added before requesting.")
         }
     }

@@ -1,6 +1,5 @@
 package com.olx.permify
 
-
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 
@@ -19,6 +18,5 @@ object Permify {
     ): PermissionRequestBuilder {
         return PermissionRequestBuilder(fragment.requireActivity(), fragment, permissions)
     }
-
 
 }

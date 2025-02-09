@@ -61,9 +61,7 @@ class PermissionDeniedDialog(
         } else {
             negativeBtn.visibility = View.GONE
         }
-
     }
-
 
     private fun setupWindow() {
         val width = context.resources.displayMetrics.widthPixels

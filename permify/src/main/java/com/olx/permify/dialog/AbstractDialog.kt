@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.View
 
-
 abstract class AbstractDialog : Dialog {
 
     constructor(context: Context) : super(context)
@@ -18,9 +17,10 @@ abstract class AbstractDialog : Dialog {
         cancelListener: DialogInterface.OnCancelListener?
     ) : super(context, cancelable, cancelListener)
 
-
     abstract fun getPositiveButton(): View
+
     abstract fun getNegativeButton(): View?
+
     abstract fun getPermissionList(): List<String>
 
 }

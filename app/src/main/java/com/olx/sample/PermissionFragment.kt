@@ -21,7 +21,6 @@ class PermissionFragment : Fragment(), PermissionCallback {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         return inflater.inflate(R.layout.fragment_permission, container, false)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,7 +53,6 @@ class PermissionFragment : Fragment(), PermissionCallback {
         }
     }
 
-
     override fun onResult(
         allGranted: Boolean,
         grantedList: List<String>,
@@ -64,6 +62,5 @@ class PermissionFragment : Fragment(), PermissionCallback {
         Log.d("Permify", "Granted permissions: $grantedList")
         Log.d("Permify", "Denied permissions: $deniedList")
     }
-
 
 }

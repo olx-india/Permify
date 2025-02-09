@@ -20,12 +20,12 @@ class InvisiblePermissionFragment : Fragment() {
 
     private var permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
-            handlePermissionResult(result);
+            handlePermissionResult(result)
         }
 
     private val forwardToSettingsLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            requestAgain(ArrayList(permissionRequestBuilder?.forwardPermissions))
+            requestAgain(ArrayList(permissionRequestBuilder.forwardPermissions))
         }
 
     fun forwardToSettings() {
@@ -59,7 +59,6 @@ class InvisiblePermissionFragment : Fragment() {
         }
 
         // for reference -> https://developer.android.com/about/versions/14/changes/partial-photo-video-access
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             if (permissionRequestBuilder.grantedPermissions.contains(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)) {
                 if (permissionRequestBuilder.deniedPermissions.contains(Manifest.permission.READ_MEDIA_IMAGES)) {
@@ -137,13 +136,11 @@ class InvisiblePermissionFragment : Fragment() {
         permissionLauncher.launch(permissions.toTypedArray())
     }
 
-
     fun requestAgain(
         permissions: List<String>,
     ) {
         permissionLauncher.launch(permissions.toTypedArray())
     }
-
 
     companion object {
 
@@ -156,7 +153,7 @@ class InvisiblePermissionFragment : Fragment() {
                 fragmentManager.beginTransaction().add(fragment, TAG)
                     .commitNow()
             }
-            return fragment;
+            return fragment
         }
     }
 
