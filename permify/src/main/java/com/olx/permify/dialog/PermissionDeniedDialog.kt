@@ -64,7 +64,6 @@ class PermissionDeniedDialog(
 
     }
 
-
     private fun setupWindow() {
         val width = context.resources.displayMetrics.widthPixels
         val height = context.resources.displayMetrics.heightPixels
