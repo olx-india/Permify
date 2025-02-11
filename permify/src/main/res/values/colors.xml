@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="permify_default_dialog_bg">#fff</color>
-    <color name="permify_split_line">#e0e0e0</color>
-    <color name="permify_tint_color">#1972e8</color>
-    <color name="permify_text_color">#212121</color>
-</resources>
