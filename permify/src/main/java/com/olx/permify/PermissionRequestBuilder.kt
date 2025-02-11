@@ -7,17 +7,20 @@ import com.olx.permify.callback.PermissionCallback
 import com.olx.permify.dialog.AbstractDialog
 import com.olx.permify.dialog.PermissionDeniedDialog
 import com.olx.permify.fragment.InvisiblePermissionFragment
+import com.olx.permify.utils.LOG_TAG
+import com.olx.permify.utils.Logger
+import java.lang.ref.WeakReference
 
 class PermissionRequestBuilder(
-    private val fragmentActivity: FragmentActivity,
-    private val fragment: Fragment?,
+    private val fragmentActivity: WeakReference<FragmentActivity>,
+    private val fragment: WeakReference<Fragment>?,
     val normalPermissions: List<String>
 ) {
-    var grantedPermissions: MutableSet<String> = LinkedHashSet()
-    var deniedPermissions: MutableSet<String> = LinkedHashSet()
-    var permanentDeniedPermissions: MutableSet<String> = LinkedHashSet()
-    var tempReadMediaPermissions: MutableSet<String> = LinkedHashSet()
-    var tempPermanentDeniedPermissions: MutableSet<String> = LinkedHashSet()
+    val grantedPermissions: MutableSet<String> = LinkedHashSet()
+    val deniedPermissions: MutableSet<String> = LinkedHashSet()
+    val permanentDeniedPermissions: MutableSet<String> = LinkedHashSet()
+    val tempReadMediaPermissions: MutableSet<String> = LinkedHashSet()
+    val tempPermanentDeniedPermissions: MutableSet<String> = LinkedHashSet()
 
     private var requestMessage: String? = null
 
@@ -35,14 +38,15 @@ class PermissionRequestBuilder(
         return this
     }
 
-    private val fragmentManager: FragmentManager
+    private val fragmentManager: FragmentManager?
         get() {
-            return fragment?.childFragmentManager ?: fragmentActivity.supportFragmentManager
+            return fragment?.get()?.childFragmentManager
+                ?: fragmentActivity.get()?.supportFragmentManager
         }
 
-    private val invisiblePermissionFragment: InvisiblePermissionFragment
+    private val invisiblePermissionFragment: InvisiblePermissionFragment?
         get() {
-            return InvisiblePermissionFragment.getInstance(fragmentManager)
+            return fragmentManager?.let { InvisiblePermissionFragment.getInstance(it) }
         }
 
     fun buildAndRequest(permissionCallback: PermissionCallback) {
@@ -52,7 +56,7 @@ class PermissionRequestBuilder(
 
     private fun validateBuilderState() {
         if (requestMessage.isNullOrEmpty()) {
-            throw IllegalStateException("Permissions must be added before requesting.")
+            Logger.e(LOG_TAG, "Permissions must be added before requesting.")
         }
     }
 
@@ -61,14 +65,17 @@ class PermissionRequestBuilder(
         permissions: List<String>,
     ) {
         val message = if (showReasonOrGoSettings) openSettingMessage else requestMessage
-        val defaultDialog = PermissionDeniedDialog(
-            fragmentActivity,
-            permissions,
-            message ?: "",
-            "Allow",
-            "Cancel"
-        )
-        showAndHandlePermissionDialog(showReasonOrGoSettings, defaultDialog)
+        val context = fragmentActivity.get()
+        if (context != null) {
+            val defaultDialog = PermissionDeniedDialog(
+                context,
+                permissions,
+                message ?: "",
+                context.resources.getString(R.string.allow),
+                context.resources.getString(R.string.cancel)
+            )
+            showAndHandlePermissionDialog(showReasonOrGoSettings, defaultDialog)
+        }
     }
 
     private fun showAndHandlePermissionDialog(
@@ -87,7 +94,7 @@ class PermissionRequestBuilder(
         positiveButton.setOnClickListener {
             dialog.dismiss()
             if (showReasonOrGoSettings) {
-                invisiblePermissionFragment.requestAgain(permissions)
+                invisiblePermissionFragment?.requestAgain(permissions)
             } else {
                 forwardToSettings(permissions)
             }
@@ -101,13 +108,13 @@ class PermissionRequestBuilder(
     }
 
     private fun requestPermission(permissionCallback: PermissionCallback) {
-        invisiblePermissionFragment.requestNow(normalPermissions, permissionCallback, this)
+        invisiblePermissionFragment?.requestNow(normalPermissions, permissionCallback, this)
     }
 
     private fun forwardToSettings(permissions: List<String>) {
         forwardPermissions.clear()
         forwardPermissions.addAll(permissions)
-        invisiblePermissionFragment.forwardToSettings()
+        invisiblePermissionFragment?.forwardToSettings()
     }
 
 }

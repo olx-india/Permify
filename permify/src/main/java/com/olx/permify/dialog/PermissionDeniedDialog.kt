@@ -2,13 +2,9 @@ package com.olx.permify.dialog
 
 import android.content.Context
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import com.olx.permify.R
+import com.olx.permify.databinding.PermifyDefaultDialogLayoutBinding
 
 class PermissionDeniedDialog(
     context: Context,
@@ -16,36 +12,25 @@ class PermissionDeniedDialog(
     private val message: String,
     private val positiveText: String,
     private val negativeText: String?,
-) :
-    AbstractDialog(context, R.style.PermifyDefaultDialog) {
+) : AbstractDialog(context, R.style.PermifyDefaultDialog) {
 
-    private lateinit var permissionsLayout: LinearLayout
-    private lateinit var messageText: TextView
-    private lateinit var positiveBtn: Button
-    private lateinit var negativeBtn: Button
-    private lateinit var permissionIcon: ImageView
-    private lateinit var permissionText: TextView
+    private lateinit var binding: PermifyDefaultDialogLayoutBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.permify_default_dialog_layout)
-
-        permissionsLayout = findViewById(R.id.permissionsLayout)
-        messageText = findViewById(R.id.messageText)
-        positiveBtn = findViewById(R.id.positiveBtn)
-        negativeBtn = findViewById(R.id.negativeBtn)
+        binding = PermifyDefaultDialogLayoutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setupText()
         setupWindow()
     }
 
     override fun getPositiveButton(): View {
-        return positiveBtn
+        return binding.positiveBtn
     }
 
     override fun getNegativeButton(): View? {
-        if (negativeText != null) return negativeBtn
-        else return null
+        return if (negativeText != null) binding.negativeBtn else null
     }
 
     override fun getPermissionList(): List<String> {
@@ -53,13 +38,13 @@ class PermissionDeniedDialog(
     }
 
     private fun setupText() {
-        messageText.text = message
-        positiveBtn.text = positiveText
+        binding.messageText.text = message
+        binding.positiveBtn.text = positiveText
         if (negativeText != null) {
-            negativeBtn.visibility = View.VISIBLE
-            negativeBtn.text = negativeText
+            binding.negativeBtn.visibility = View.VISIBLE
+            binding.negativeBtn.text = negativeText
         } else {
-            negativeBtn.visibility = View.GONE
+            binding.negativeBtn.visibility = View.GONE
         }
     }
 
@@ -68,11 +53,10 @@ class PermissionDeniedDialog(
         val height = context.resources.displayMetrics.heightPixels
         window?.let {
             val param = it.attributes
-            it.setGravity(Gravity.CENTER)
-            if (width < height) {
-                param.width = (width * 0.86).toInt()
+            param.width = if (width < height) {
+                (width * 0.86).toInt()
             } else {
-                param.width = (width * 0.6).toInt()
+                (width * 0.6).toInt()
             }
             it.attributes = param
         }

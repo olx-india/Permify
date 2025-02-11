@@ -5,6 +5,7 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFrame">@null</item>
         <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:gravity">center</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 

@@ -83,7 +83,7 @@ class InvisiblePermissionFragment : Fragment() {
         }
 
         val deniedPermissions: MutableList<String> =
-            java.util.ArrayList()
+            arrayListOf()
         deniedPermissions.addAll(permissionRequestBuilder.deniedPermissions)
         deniedPermissions.addAll(permissionRequestBuilder.permanentDeniedPermissions)
         for (permission in deniedPermissions) {
