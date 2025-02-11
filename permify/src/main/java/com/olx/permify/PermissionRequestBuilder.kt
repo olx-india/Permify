@@ -14,13 +14,13 @@ import java.lang.ref.WeakReference
 class PermissionRequestBuilder(
     private val fragmentActivity: WeakReference<FragmentActivity>,
     private val fragment: WeakReference<Fragment>?,
-    val normalPermissions: List<String>
+    internal val normalPermissions: List<String>
 ) {
-    val grantedPermissions: MutableSet<String> = LinkedHashSet()
-    val deniedPermissions: MutableSet<String> = LinkedHashSet()
-    val permanentDeniedPermissions: MutableSet<String> = LinkedHashSet()
-    val tempReadMediaPermissions: MutableSet<String> = LinkedHashSet()
-    val tempPermanentDeniedPermissions: MutableSet<String> = LinkedHashSet()
+    internal val grantedPermissions: MutableSet<String> = LinkedHashSet()
+    internal val deniedPermissions: MutableSet<String> = LinkedHashSet()
+    internal val permanentDeniedPermissions: MutableSet<String> = LinkedHashSet()
+    internal val tempReadMediaPermissions: MutableSet<String> = LinkedHashSet()
+    internal val tempPermanentDeniedPermissions: MutableSet<String> = LinkedHashSet()
 
     private var requestMessage: String? = null
 
