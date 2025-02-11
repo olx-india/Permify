@@ -37,9 +37,44 @@ class InvisiblePermissionFragment : Fragment() {
 
     private fun handlePermissionResult(result: Map<String, Boolean>) {
         permissionRequestBuilder.grantedPermissions.clear()
-        val showReasonList: MutableList<String> = ArrayList()
-        val forwardList: MutableList<String> = ArrayList()
 
+        val showReasonList = ArrayList<String>()
+        val forwardList = ArrayList<String>()
+
+        processPermissions(result, showReasonList, forwardList)
+        handleMediaPermissions()
+
+        val deniedPermissions = getDeniedPermissions()
+        updateGrantedPermissions(deniedPermissions)
+
+        val allGranted =
+            permissionRequestBuilder.grantedPermissions.size == permissionRequestBuilder.normalPermissions.size
+        if (allGranted) {
+            permissionCallback?.onResult(
+                deniedPermissions.isEmpty(),
+                ArrayList(permissionRequestBuilder.grantedPermissions),
+                deniedPermissions
+            )
+        } else {
+            showHandlePermissionDialogIfNeeded(showReasonList, forwardList)
+        }
+
+        val deniedList = ArrayList<String>()
+        deniedList.addAll(permissionRequestBuilder.deniedPermissions)
+        deniedList.addAll(permissionRequestBuilder.permanentDeniedPermissions)
+
+        permissionCallback?.onResult(
+            deniedList.isEmpty(),
+            ArrayList(permissionRequestBuilder.grantedPermissions),
+            deniedList
+        )
+    }
+
+    private fun processPermissions(
+        result: Map<String, Boolean>,
+        showReasonList: MutableList<String>,
+        forwardList: MutableList<String>
+    ) {
         for ((permission, granted) in result) {
             if (granted) {
                 permissionRequestBuilder.grantedPermissions.add(permission)
@@ -57,73 +92,60 @@ class InvisiblePermissionFragment : Fragment() {
                 }
             }
         }
+    }
 
-        // for reference -> https://developer.android.com/about/versions/14/changes/partial-photo-video-access
+    private fun handleMediaPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             if (permissionRequestBuilder.grantedPermissions.contains(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)) {
-                if (permissionRequestBuilder.deniedPermissions.contains(Manifest.permission.READ_MEDIA_IMAGES)) {
-                    permissionRequestBuilder.deniedPermissions.remove(Manifest.permission.READ_MEDIA_IMAGES)
-                    showReasonList.remove(Manifest.permission.READ_MEDIA_IMAGES)
-                    permissionRequestBuilder.tempReadMediaPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
-                } else if (permissionRequestBuilder.permanentDeniedPermissions.contains(Manifest.permission.READ_MEDIA_IMAGES)) {
-                    permissionRequestBuilder.permanentDeniedPermissions.remove(Manifest.permission.READ_MEDIA_IMAGES)
-                    forwardList.remove(Manifest.permission.READ_MEDIA_IMAGES)
-                    permissionRequestBuilder.tempReadMediaPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
-                }
-                if (permissionRequestBuilder.deniedPermissions.contains(Manifest.permission.READ_MEDIA_VIDEO)) {
-                    permissionRequestBuilder.deniedPermissions.remove(Manifest.permission.READ_MEDIA_VIDEO)
-                    showReasonList.remove(Manifest.permission.READ_MEDIA_VIDEO)
-                    permissionRequestBuilder.tempReadMediaPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
-                } else if (permissionRequestBuilder.permanentDeniedPermissions.contains(Manifest.permission.READ_MEDIA_VIDEO)) {
-                    permissionRequestBuilder.permanentDeniedPermissions.remove(Manifest.permission.READ_MEDIA_VIDEO)
-                    forwardList.remove(Manifest.permission.READ_MEDIA_VIDEO)
-                    permissionRequestBuilder.tempReadMediaPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
-                }
+                handleMediaPermission(Manifest.permission.READ_MEDIA_IMAGES)
+                handleMediaPermission(Manifest.permission.READ_MEDIA_VIDEO)
             }
         }
+    }
 
-        val deniedPermissions: MutableList<String> =
-            arrayListOf()
+    private fun handleMediaPermission(permission: String) {
+        if (permissionRequestBuilder.deniedPermissions.contains(permission)) {
+            permissionRequestBuilder.deniedPermissions.remove(permission)
+            permissionRequestBuilder.tempReadMediaPermissions.add(permission)
+        } else if (permissionRequestBuilder.permanentDeniedPermissions.contains(permission)) {
+            permissionRequestBuilder.permanentDeniedPermissions.remove(permission)
+            permissionRequestBuilder.tempReadMediaPermissions.add(permission)
+        }
+    }
+
+    private fun getDeniedPermissions(): MutableList<String> {
+        val deniedPermissions = ArrayList<String>()
         deniedPermissions.addAll(permissionRequestBuilder.deniedPermissions)
         deniedPermissions.addAll(permissionRequestBuilder.permanentDeniedPermissions)
+        return deniedPermissions
+    }
+
+    private fun updateGrantedPermissions(deniedPermissions: MutableList<String>) {
         for (permission in deniedPermissions) {
             if (PermissionUtils.isPermissionGranted(requireContext(), permission)) {
                 permissionRequestBuilder.deniedPermissions.remove(permission)
                 permissionRequestBuilder.grantedPermissions.add(permission)
             }
         }
-        val allGranted =
-            permissionRequestBuilder.grantedPermissions.size == permissionRequestBuilder.normalPermissions.size
-        if (allGranted) {
-            permissionCallback?.onResult(
-                deniedPermissions.isEmpty(),
-                ArrayList(permissionRequestBuilder.grantedPermissions),
-                deniedPermissions
-            )
-        } else {
-            if (showReasonList.isNotEmpty()) {
-                permissionRequestBuilder.showHandlePermissionDialog(
-                    true,
-                    ArrayList(permissionRequestBuilder.deniedPermissions)
-                )
-                permissionRequestBuilder.tempPermanentDeniedPermissions.addAll(forwardList)
-            } else if (forwardList.isNotEmpty() || permissionRequestBuilder.tempPermanentDeniedPermissions.isNotEmpty()) {
-                permissionRequestBuilder.tempPermanentDeniedPermissions.clear() // no need to store them anymore once onForwardToSettings callback.
-                permissionRequestBuilder.showHandlePermissionDialog(
-                    false,
-                    ArrayList(permissionRequestBuilder.permanentDeniedPermissions)
-                )
-            }
-        }
-        val deniedList: MutableList<String> = java.util.ArrayList()
-        deniedList.addAll(permissionRequestBuilder.deniedPermissions)
-        deniedList.addAll(permissionRequestBuilder.permanentDeniedPermissions)
+    }
 
-        permissionCallback?.onResult(
-            deniedList.isEmpty(),
-            ArrayList(permissionRequestBuilder.grantedPermissions),
-            deniedList
-        )
+    private fun showHandlePermissionDialogIfNeeded(
+        showReasonList: MutableList<String>,
+        forwardList: MutableList<String>
+    ) {
+        if (showReasonList.isNotEmpty()) {
+            permissionRequestBuilder.showHandlePermissionDialog(
+                true,
+                ArrayList(permissionRequestBuilder.deniedPermissions)
+            )
+            permissionRequestBuilder.tempPermanentDeniedPermissions.addAll(forwardList)
+        } else if (forwardList.isNotEmpty() || permissionRequestBuilder.tempPermanentDeniedPermissions.isNotEmpty()) {
+            permissionRequestBuilder.tempPermanentDeniedPermissions.clear() // no need to store them anymore once onForwardToSettings callback.
+            permissionRequestBuilder.showHandlePermissionDialog(
+                false,
+                ArrayList(permissionRequestBuilder.permanentDeniedPermissions)
+            )
+        }
     }
 
     fun requestNow(

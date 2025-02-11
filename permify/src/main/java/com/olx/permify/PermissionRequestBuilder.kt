@@ -28,12 +28,8 @@ class PermissionRequestBuilder(
 
     var forwardPermissions: MutableSet<String> = LinkedHashSet()
 
-    fun setPermissionRequestMessage(requestMessage: String): PermissionRequestBuilder {
+    fun setPermissionRequestMessages(requestMessage: String, openSettingMessage: String): PermissionRequestBuilder {
         this.requestMessage = requestMessage
-        return this
-    }
-
-    fun setPermissionOpenSettingMessage(openSettingMessage: String): PermissionRequestBuilder {
         this.openSettingMessage = openSettingMessage
         return this
     }

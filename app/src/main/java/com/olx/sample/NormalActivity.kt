@@ -37,15 +37,19 @@ class NormalActivity : AppCompatActivity(), PermissionCallback {
         frameLayout = findViewById(R.id.fr_open_fragment)
         tvCameraPermission.setOnClickListener {
             Permify.init(this, listOf(Manifest.permission.CAMERA))
-                .setPermissionRequestMessage("OLX needs following permissions to continue")
-                .setPermissionOpenSettingMessage("Please allow following permissions in settings")
+                .setPermissionRequestMessages(
+                    "OLX needs following permissions to continue",
+                    "Please allow following permissions in settings"
+                )
                 .buildAndRequest(this)
         }
 
         tvFilePermission.setOnClickListener {
             Permify.init(this, listPermission)
-                .setPermissionRequestMessage("OLX needs following permissions to continue")
-                .setPermissionOpenSettingMessage("Please allow following permissions in settings")
+                .setPermissionRequestMessages(
+                    "OLX needs following permissions to continue",
+                    "Please allow following permissions in settings"
+                )
                 .buildAndRequest(this)
         }
 
