@@ -21,9 +21,7 @@ class PermissionDeniedDialog(
         super.onCreate(savedInstanceState)
         binding = PermifyDefaultDialogLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setupText()
-        setupWindow()
     }
 
     override fun getPositiveButton(): View {
@@ -39,23 +37,10 @@ class PermissionDeniedDialog(
     }
 
     private fun setupText() {
-        binding.messageText.text = message
+        binding.tvMessageText.text = message
         binding.positiveBtn.text = positiveText
         binding.negativeBtn.isVisible = !negativeText.isNullOrBlank()
         binding.negativeBtn.text = negativeText
     }
 
-    private fun setupWindow() {
-        val width = context.resources.displayMetrics.widthPixels
-        val height = context.resources.displayMetrics.heightPixels
-        window?.let {
-            val param = it.attributes
-            param.width = if (width < height) {
-                (width * 0.86).toInt()
-            } else {
-                (width * 0.6).toInt()
-            }
-            it.attributes = param
-        }
-    }
 }

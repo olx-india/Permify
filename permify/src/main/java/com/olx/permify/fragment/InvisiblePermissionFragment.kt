@@ -168,7 +168,7 @@ class InvisiblePermissionFragment : Fragment() {
         }
     }
 
-    fun requestNow(
+    internal fun requestNow(
         permissions: List<String>,
         permissionCallback: PermissionCallback,
         permissionRequestBuilder: PermissionRequestBuilder,
