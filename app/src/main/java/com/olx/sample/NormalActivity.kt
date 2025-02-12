@@ -9,12 +9,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.olx.permify.Permify
-import com.olx.permify.PermissionRequestBuilder
 import com.olx.permify.callback.PermissionCallback
 
 class NormalActivity : AppCompatActivity(), PermissionCallback {
 
-    lateinit var builder: PermissionRequestBuilder
 
     lateinit var tvCameraPermission: TextView
     lateinit var tvFilePermission: TextView
@@ -36,17 +34,23 @@ class NormalActivity : AppCompatActivity(), PermissionCallback {
         tvOpenFragment = findViewById(R.id.tv_open_fragment)
         frameLayout = findViewById(R.id.fr_open_fragment)
         tvCameraPermission.setOnClickListener {
-            Permify.init(this, listOf(Manifest.permission.CAMERA)).setPermissionRequestMessages(
-                    "OLX needs following permissions to continue",
-                    "Please allow following permissions in settings"
-                ).buildAndRequest(this)
+            Permify.requestPermission(
+                this,
+                listOf(Manifest.permission.CAMERA),
+                this,
+                "OLX needs following permissions to continue",
+                "Please allow following permissions in settings"
+            )
         }
 
         tvFilePermission.setOnClickListener {
-            Permify.init(this, listPermission).setPermissionRequestMessages(
-                    "OLX needs following permissions to continue",
-                    "Please allow following permissions in settings"
-                ).buildAndRequest(this)
+            Permify.requestPermission(
+                this,
+                listPermission,
+                this,
+                "OLX needs following permissions to continue",
+                "Please allow following permissions in settings"
+            )
         }
 
         tvOpenFragment.setOnClickListener {

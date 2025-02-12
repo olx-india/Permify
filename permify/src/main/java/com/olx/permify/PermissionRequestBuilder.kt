@@ -11,7 +11,7 @@ import com.olx.permify.utils.LOG_TAG
 import com.olx.permify.utils.Logger
 import java.lang.ref.WeakReference
 
-class PermissionRequestBuilder(
+internal class PermissionRequestBuilder(
     private val fragmentActivity: WeakReference<FragmentActivity>,
     private val fragment: WeakReference<Fragment>?,
     internal val normalPermissions: List<String>
@@ -28,7 +28,7 @@ class PermissionRequestBuilder(
 
     internal var forwardPermissions: MutableSet<String> = LinkedHashSet()
 
-    fun setPermissionRequestMessages(
+    internal fun setPermissionRequestMessages(
         requestMessage: String,
         openSettingMessage: String
     ): PermissionRequestBuilder {
