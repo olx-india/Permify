@@ -5,7 +5,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 
 object Logger {
-    var debug: Boolean = true
+    var debug: Boolean = false
 
     fun v(message: String) {
         v(LOG_TAG, message)

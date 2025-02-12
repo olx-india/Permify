@@ -28,10 +28,17 @@ class PermissionRequestBuilder(
 
     var forwardPermissions: MutableSet<String> = LinkedHashSet()
 
-    fun setPermissionRequestMessages(requestMessage: String, openSettingMessage: String): PermissionRequestBuilder {
+    fun setPermissionRequestMessages(
+        requestMessage: String,
+        openSettingMessage: String
+    ): PermissionRequestBuilder {
         this.requestMessage = requestMessage
         this.openSettingMessage = openSettingMessage
         return this
+    }
+
+    fun enableDebugLogs(enableLog: Boolean) {
+        Logger.debug = enableLog
     }
 
     private val fragmentManager: FragmentManager?
@@ -75,7 +82,8 @@ class PermissionRequestBuilder(
     }
 
     private fun showAndHandlePermissionDialog(
-        showReasonOrGoSettings: Boolean, dialog: AbstractDialog
+        showReasonOrGoSettings: Boolean,
+        dialog: AbstractDialog
     ) {
         val permissions = dialog.getPermissionList()
         if (permissions.isEmpty()) {

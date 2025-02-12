@@ -5,17 +5,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.View
 
-abstract class AbstractDialog : Dialog {
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, themeResId: Int) : super(context, themeResId)
-
-    protected constructor(
-        context: Context,
-        cancelable: Boolean,
-        cancelListener: DialogInterface.OnCancelListener?
-    ) : super(context, cancelable, cancelListener)
+abstract class AbstractDialog(context: Context, themeResId: Int) :
+    Dialog(context, themeResId) {
 
     abstract fun getPositiveButton(): View
 

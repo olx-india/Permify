@@ -1,6 +1,7 @@
 package com.olx.permify.fragment
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -50,9 +51,9 @@ class InvisiblePermissionFragment : Fragment() {
         val allGranted =
             permissionRequestBuilder.grantedPermissions.size == permissionRequestBuilder.normalPermissions.size
         if (allGranted) {
-            permissionCallback?.onResult(
+            callPermissionResultCallback(
                 deniedPermissions.isEmpty(),
-                ArrayList(permissionRequestBuilder.grantedPermissions),
+                permissionRequestBuilder.grantedPermissions,
                 deniedPermissions
             )
         } else {
@@ -63,11 +64,21 @@ class InvisiblePermissionFragment : Fragment() {
         deniedList.addAll(permissionRequestBuilder.deniedPermissions)
         deniedList.addAll(permissionRequestBuilder.permanentDeniedPermissions)
 
-        permissionCallback?.onResult(
+        callPermissionResultCallback(
             deniedList.isEmpty(),
-            ArrayList(permissionRequestBuilder.grantedPermissions),
+            permissionRequestBuilder.grantedPermissions,
             deniedList
         )
+    }
+
+    private fun callPermissionResultCallback(
+        granted: Boolean,
+        grantedPermissions: MutableSet<String>,
+        deniedPermissions: List<String>
+    ) {
+        if (isAdded && isVisible) {
+            permissionCallback?.onResult(granted, ArrayList(grantedPermissions), deniedPermissions)
+        }
     }
 
     private fun processPermissions(
@@ -140,7 +151,7 @@ class InvisiblePermissionFragment : Fragment() {
             )
             permissionRequestBuilder.tempPermanentDeniedPermissions.addAll(forwardList)
         } else if (forwardList.isNotEmpty() || permissionRequestBuilder.tempPermanentDeniedPermissions.isNotEmpty()) {
-            permissionRequestBuilder.tempPermanentDeniedPermissions.clear() // no need to store them anymore once onForwardToSettings callback.
+            permissionRequestBuilder.tempPermanentDeniedPermissions.clear()
             permissionRequestBuilder.showHandlePermissionDialog(
                 false,
                 ArrayList(permissionRequestBuilder.permanentDeniedPermissions)
@@ -150,7 +161,7 @@ class InvisiblePermissionFragment : Fragment() {
 
     fun requestNow(
         permissions: List<String>,
-        permissionCallback: PermissionCallback?,
+        permissionCallback: PermissionCallback,
         permissionRequestBuilder: PermissionRequestBuilder,
     ) {
         this.permissionRequestBuilder = permissionRequestBuilder
@@ -173,7 +184,7 @@ class InvisiblePermissionFragment : Fragment() {
             if (fragment == null) {
                 fragment = InvisiblePermissionFragment()
                 fragmentManager.beginTransaction().add(fragment, TAG)
-                    .commitNow()
+                    .commitNowAllowingStateLoss()
             }
             return fragment
         }

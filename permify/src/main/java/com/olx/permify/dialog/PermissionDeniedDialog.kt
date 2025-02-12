@@ -3,6 +3,7 @@ package com.olx.permify.dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import com.olx.permify.R
 import com.olx.permify.databinding.PermifyDefaultDialogLayoutBinding
 
@@ -40,6 +41,7 @@ class PermissionDeniedDialog(
     private fun setupText() {
         binding.messageText.text = message
         binding.positiveBtn.text = positiveText
+        binding.negativeBtn.isVisible =! negativeText.isNullOrBlank()
         if (negativeText != null) {
             binding.negativeBtn.visibility = View.VISIBLE
             binding.negativeBtn.text = negativeText
