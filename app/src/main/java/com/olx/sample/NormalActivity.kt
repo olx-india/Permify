@@ -13,7 +13,6 @@ import com.olx.permify.callback.PermissionCallback
 
 class NormalActivity : AppCompatActivity(), PermissionCallback {
 
-
     lateinit var tvCameraPermission: TextView
     lateinit var tvFilePermission: TextView
     lateinit var tvOpenFragment: TextView
@@ -57,7 +56,6 @@ class NormalActivity : AppCompatActivity(), PermissionCallback {
             openFragment()
         }
     }
-
 
     private fun openFragment() {
         frameLayout.visibility = View.VISIBLE
