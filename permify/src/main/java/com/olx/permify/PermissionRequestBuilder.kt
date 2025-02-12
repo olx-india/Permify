@@ -121,4 +121,7 @@ class PermissionRequestBuilder(
         invisiblePermissionFragment?.forwardToSettings()
     }
 
+    fun getCallerFragmentOrActivity(): Any? {
+        return fragment?.get() ?: fragmentActivity.get()
+    }
 }

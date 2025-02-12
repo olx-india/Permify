@@ -36,21 +36,17 @@ class NormalActivity : AppCompatActivity(), PermissionCallback {
         tvOpenFragment = findViewById(R.id.tv_open_fragment)
         frameLayout = findViewById(R.id.fr_open_fragment)
         tvCameraPermission.setOnClickListener {
-            Permify.init(this, listOf(Manifest.permission.CAMERA))
-                .setPermissionRequestMessages(
+            Permify.init(this, listOf(Manifest.permission.CAMERA)).setPermissionRequestMessages(
                     "OLX needs following permissions to continue",
                     "Please allow following permissions in settings"
-                )
-                .buildAndRequest(this)
+                ).buildAndRequest(this)
         }
 
         tvFilePermission.setOnClickListener {
-            Permify.init(this, listPermission)
-                .setPermissionRequestMessages(
+            Permify.init(this, listPermission).setPermissionRequestMessages(
                     "OLX needs following permissions to continue",
                     "Please allow following permissions in settings"
-                )
-                .buildAndRequest(this)
+                ).buildAndRequest(this)
         }
 
         tvOpenFragment.setOnClickListener {
@@ -63,17 +59,13 @@ class NormalActivity : AppCompatActivity(), PermissionCallback {
         frameLayout.visibility = View.VISIBLE
         val fragment = PermissionFragment()
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fr_open_fragment, fragment)
-            .commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fr_open_fragment, fragment).commit()
 
         findViewById<LinearLayout>(R.id.ll_buttons).visibility = View.GONE
     }
 
     override fun onResult(
-        allGranted: Boolean,
-        grantedList: List<String>,
-        deniedList: List<String>
+        allGranted: Boolean, grantedList: List<String>, deniedList: List<String>
     ) {
         Log.d("Permify", "All granted: $allGranted")
         Log.d("Permify", "Granted permissions: $grantedList")
