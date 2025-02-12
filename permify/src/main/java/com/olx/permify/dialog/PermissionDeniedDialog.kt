@@ -41,7 +41,7 @@ class PermissionDeniedDialog(
     private fun setupText() {
         binding.messageText.text = message
         binding.positiveBtn.text = positiveText
-        binding.negativeBtn.isVisible =! negativeText.isNullOrBlank()
+        binding.negativeBtn.isVisible = !negativeText.isNullOrBlank()
         binding.negativeBtn.text = negativeText
     }
 
