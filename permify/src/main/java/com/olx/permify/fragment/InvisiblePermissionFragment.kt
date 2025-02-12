@@ -77,12 +77,12 @@ class InvisiblePermissionFragment : Fragment() {
         deniedPermissions: List<String>
     ) {
         val getCaller = permissionRequestBuilder.getCallerFragmentOrActivity()
-        if (isValidLifecycleOwner(getCaller)) {
+        if (isActivityOrFragmentAlive(getCaller)) {
             permissionCallback?.onResult(granted, ArrayList(grantedPermissions), deniedPermissions)
         }
     }
 
-    private fun <T> isValidLifecycleOwner(caller: T?): Boolean {
+    private fun <T> isActivityOrFragmentAlive(caller: T?): Boolean {
         return when (caller) {
             is Fragment -> caller.isAdded && caller.isVisible
             is Activity -> !caller.isFinishing && !caller.isDestroyed
