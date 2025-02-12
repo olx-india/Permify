@@ -1,6 +1,5 @@
 package com.olx.permify
 
-import android.provider.SyncStateContract.Constants
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.olx.permify.callback.PermissionCallback
