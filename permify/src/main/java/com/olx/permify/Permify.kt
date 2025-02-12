@@ -43,9 +43,6 @@ object Permify {
             weakFragment,
             permissions
         ).setPermissionRequestMessages(requestMessage, openSettingMessage)
-            .buildAndRequest(
-                permissionCallback
-            )
+            .buildAndRequest(permissionCallback)
     }
-
 }

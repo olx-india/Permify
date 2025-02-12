@@ -198,5 +198,4 @@ class InvisiblePermissionFragment : Fragment() {
             return fragment
         }
     }
-
 }

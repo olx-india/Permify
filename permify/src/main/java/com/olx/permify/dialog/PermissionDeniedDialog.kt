@@ -42,5 +42,4 @@ class PermissionDeniedDialog(
         binding.negativeBtn.isVisible = !negativeText.isNullOrBlank()
         binding.negativeBtn.text = negativeText
     }
-
 }
