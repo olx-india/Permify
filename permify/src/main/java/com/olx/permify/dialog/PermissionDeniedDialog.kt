@@ -31,7 +31,7 @@ class PermissionDeniedDialog(
     }
 
     override fun getNegativeButton(): View? {
-        return if (negativeText != null) binding.negativeBtn else null
+        return if (negativeText.isNullOrBlank()) null else binding.negativeBtn
     }
 
     override fun getPermissionList(): List<String> {
