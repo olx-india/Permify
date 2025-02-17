@@ -18,6 +18,7 @@ class PermissionRequestBuilder(
     private val fragment: WeakReference<Fragment>?,
     internal val normalPermissions: MutableList<String>
 ) {
+
     init {
         filterPermission()
     }
