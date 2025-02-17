@@ -133,7 +133,7 @@ class PermissionRequestBuilder(
     }
 
     private fun filterPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU &&
             Manifest.permission.POST_NOTIFICATIONS in normalPermissions
         ) {
             normalPermissions.remove(Manifest.permission.POST_NOTIFICATIONS)

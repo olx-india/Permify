@@ -29,8 +29,20 @@ class NormalActivity : AppCompatActivity(), PermissionCallback {
             Permify.requestPermission(
                 activity = this,
                 showDialogs = false,
-                permissionCallback = this,
-                permissions = listOf(Manifest.permission.POST_NOTIFICATIONS)
+                permissions = listOf(Manifest.permission.POST_NOTIFICATIONS),
+                permissionCallback = object : PermissionCallback {
+                    override fun onResult(
+                        allGranted: Boolean,
+                        grantedList: List<String>,
+                        deniedList: List<String>
+                    ) {
+                        Log.e(
+                            "Permify",
+                            "POST_NOTIFICATIONS permission status:" +
+                                    " ${if (allGranted) "Granted" else "Denied"}"
+                        )
+                    }
+                }
             )
         }
 
