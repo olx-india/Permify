@@ -1,5 +1,6 @@
 package com.olx.permify
 
+import android.Manifest
 import android.os.Build
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -10,7 +11,6 @@ import com.olx.permify.dialog.PermissionDeniedDialog
 import com.olx.permify.fragment.InvisiblePermissionFragment
 import com.olx.permify.utils.LOG_TAG
 import com.olx.permify.utils.Logger
-import com.olx.permify.utils.POST_NOTIFICATIONS
 import java.lang.ref.WeakReference
 
 class PermissionRequestBuilder(
@@ -133,9 +133,9 @@ class PermissionRequestBuilder(
 
     private fun filterPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            POST_NOTIFICATIONS in normalPermissions
+            Manifest.permission.POST_NOTIFICATIONS in normalPermissions
         ) {
-            normalPermissions.remove(POST_NOTIFICATIONS)
+            normalPermissions.remove(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
