@@ -4,15 +4,19 @@ import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.olx.permify.Permify
 import com.olx.permify.callback.PermissionCallback
-import com.olx.sample.databinding.ActivityNormalBinding
 
 class NormalActivity : AppCompatActivity(), PermissionCallback {
 
-    private lateinit var binding: ActivityNormalBinding
+    lateinit var tvCameraPermission: TextView
+    lateinit var tvFilePermission: TextView
+    lateinit var tvOpenFragment: TextView
+    lateinit var frameLayout: FrameLayout
 
     private val listPermission = listOf<String>(
         Manifest.permission.RECORD_AUDIO,
@@ -22,34 +26,39 @@ class NormalActivity : AppCompatActivity(), PermissionCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityNormalBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_normal)
 
-        binding.tvPostNotificationPermission.setOnClickListener {
+        tvCameraPermission = findViewById(R.id.tv_camera_permission)
+        tvFilePermission = findViewById(R.id.tv_file_permission)
+        tvOpenFragment = findViewById(R.id.tv_open_fragment)
+        frameLayout = findViewById(R.id.fr_open_fragment)
+        tvCameraPermission.setOnClickListener {
             Permify.requestPermission(
-                activity = this,
-                showDialogs = false,
-                permissionCallback = this,
-                permissions = listOf(Manifest.permission.POST_NOTIFICATIONS)
+                this,
+                listOf(Manifest.permission.CAMERA),
+                this,
+                "OLX needs following permissions to continue",
+                "Please allow following permissions in settings"
             )
         }
 
-//        binding.tvReadPhoneStatePermission.setOnClickListener {
-//            Permify.requestPermission(
-//                activity = this,
-//                permissions = listOf(Manifest.permission.READ_PHONE_STATE),
-//                requestMessage = "OLX needs following permissions to continue",
-//                openSettingMessage = "Please allow following permissions in settings"
-//            )
-//        }
+        tvFilePermission.setOnClickListener {
+            Permify.requestPermission(
+                this,
+                listPermission,
+                this,
+                "OLX needs following permissions to continue",
+                "Please allow following permissions in settings"
+            )
+        }
 
-        binding.tvOpenFragment.setOnClickListener {
-            openFragment(binding)
+        tvOpenFragment.setOnClickListener {
+            openFragment()
         }
     }
 
-    private fun openFragment(binding: ActivityNormalBinding) {
-        binding.frOpenFragment.visibility = View.VISIBLE
+    private fun openFragment() {
+        frameLayout.visibility = View.VISIBLE
         val fragment = PermissionFragment()
 
         supportFragmentManager.beginTransaction().replace(R.id.fr_open_fragment, fragment).commit()

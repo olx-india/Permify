@@ -9,8 +9,8 @@ import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.olx.permify.Permify
 import com.olx.permify.PermissionRequestBuilder
+import com.olx.permify.PermissionUtils
 import com.olx.permify.callback.PermissionCallback
 
 class InvisiblePermissionFragment : Fragment() {
@@ -56,8 +56,7 @@ class InvisiblePermissionFragment : Fragment() {
                 permissionRequestBuilder.grantedPermissions,
                 deniedPermissions
             )
-            return
-        } else if (permissionRequestBuilder.showDialogs) {
+        } else {
             showHandlePermissionDialogIfNeeded(showReasonList, forwardList)
         }
 
@@ -143,7 +142,7 @@ class InvisiblePermissionFragment : Fragment() {
 
     private fun updateGrantedPermissions(deniedPermissions: MutableList<String>) {
         for (permission in deniedPermissions) {
-            if (Permify.isPermissionGranted(requireContext(), permission)) {
+            if (PermissionUtils.isPermissionGranted(requireContext(), permission)) {
                 permissionRequestBuilder.deniedPermissions.remove(permission)
                 permissionRequestBuilder.grantedPermissions.add(permission)
             }
