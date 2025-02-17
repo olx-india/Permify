@@ -7,7 +7,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.olx.permify.callback.DefaultPermissionCallbackImpl
 import com.olx.permify.callback.PermissionCallback
 import com.olx.permify.utils.Logger
 import com.olx.permify.utils.OPEN_SETTING_MESSAGE
@@ -20,7 +19,7 @@ object Permify {
     fun requestPermission(
         activity: FragmentActivity,
         permissions: List<String>,
-        permissionCallback: PermissionCallback = DefaultPermissionCallbackImpl(),
+        permissionCallback: PermissionCallback,
         requestMessage: String = REQUEST_MESSAGE,
         openSettingMessage: String = OPEN_SETTING_MESSAGE,
         showDialogs: Boolean = true,
@@ -39,7 +38,7 @@ object Permify {
     fun requestPermission(
         fragment: Fragment,
         permissions: List<String>,
-        permissionCallback: PermissionCallback = DefaultPermissionCallbackImpl(),
+        permissionCallback: PermissionCallback,
         requestMessage: String = REQUEST_MESSAGE,
         openSettingMessage: String = OPEN_SETTING_MESSAGE,
         showDialogs: Boolean = true,
