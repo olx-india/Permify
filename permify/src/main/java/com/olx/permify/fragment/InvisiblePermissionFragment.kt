@@ -57,7 +57,7 @@ class InvisiblePermissionFragment : Fragment() {
                 deniedPermissions
             )
             return
-        } else if (permissionRequestBuilder.showDialogs) {
+        } else if (permissionRequestBuilder.enablePermissionDialogs) {
             showHandlePermissionDialogIfNeeded(showReasonList, forwardList)
         }
 

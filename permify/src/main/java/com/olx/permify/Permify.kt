@@ -7,6 +7,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.olx.permify.callback.DefaultPermissionCallbackImpl
 import com.olx.permify.callback.PermissionCallback
 import com.olx.permify.utils.Logger
 import com.olx.permify.utils.OPEN_SETTING_MESSAGE
@@ -19,7 +20,7 @@ object Permify {
     fun requestPermission(
         activity: FragmentActivity,
         permissions: List<String>,
-        permissionCallback: PermissionCallback,
+        permissionCallback: PermissionCallback = DefaultPermissionCallbackImpl(),
         requestMessage: String = REQUEST_MESSAGE,
         openSettingMessage: String = OPEN_SETTING_MESSAGE,
         showDialogs: Boolean = true,
@@ -29,7 +30,7 @@ object Permify {
         val weakActivity = WeakReference(activity)
         val mutablePermissionList = permissions.toMutableList()
         PermissionRequestBuilder(weakActivity, null, mutablePermissionList)
-            .showDialogs(showDialogs)
+            .displayPermissionDialogs(showDialogs)
             .setPermissionRequestMessages(requestMessage, openSettingMessage)
             .buildAndRequest(permissionCallback)
     }
@@ -38,7 +39,7 @@ object Permify {
     fun requestPermission(
         fragment: Fragment,
         permissions: List<String>,
-        permissionCallback: PermissionCallback,
+        permissionCallback: PermissionCallback = DefaultPermissionCallbackImpl(),
         requestMessage: String = REQUEST_MESSAGE,
         openSettingMessage: String = OPEN_SETTING_MESSAGE,
         showDialogs: Boolean = true,
@@ -49,7 +50,7 @@ object Permify {
         val weakFragment = WeakReference(fragment)
         val mutablePermissionList = permissions.toMutableList()
         return PermissionRequestBuilder(weakActivity, weakFragment, mutablePermissionList)
-            .showDialogs(showDialogs)
+            .displayPermissionDialogs(showDialogs)
             .setPermissionRequestMessages(requestMessage, openSettingMessage)
             .buildAndRequest(permissionCallback)
     }

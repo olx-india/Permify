@@ -46,14 +46,38 @@ class NormalActivity : AppCompatActivity(), PermissionCallback {
             )
         }
 
-//        binding.tvReadPhoneStatePermission.setOnClickListener {
-//            Permify.requestPermission(
-//                activity = this,
-//                permissions = listOf(Manifest.permission.READ_PHONE_STATE),
-//                requestMessage = "OLX needs following permissions to continue",
-//                openSettingMessage = "Please allow following permissions in settings"
-//            )
-//        }
+        binding.tvLocationPermission.setOnClickListener {
+            Permify.requestPermission(
+                activity = this,
+                permissions = listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                requestMessage = "OLX needs following permissions to continue",
+                openSettingMessage = "Please allow following permissions in settings",
+                permissionCallback = object : PermissionCallback {
+                    override fun onResult(
+                        allGranted: Boolean,
+                        grantedList: List<String>,
+                        deniedList: List<String>
+                    ) {
+                        Log.e(
+                            "Permify",
+                            "OLX PERMISSION" +
+                                    " ${if (allGranted) "Granted" else "Denied"}"
+                        )
+                        Log.e(
+                            "Permify",
+                            grantedList.toString()
+                        )
+                        Log.e(
+                            "Permify",
+                            deniedList.toString()
+                        )
+                    }
+                }
+            )
+        }
 
         binding.tvOpenFragment.setOnClickListener {
             openFragment(binding)

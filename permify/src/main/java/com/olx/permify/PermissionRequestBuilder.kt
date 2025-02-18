@@ -23,7 +23,7 @@ class PermissionRequestBuilder(
         filterPermission()
     }
 
-    internal var showDialogs: Boolean = true
+    internal var enablePermissionDialogs: Boolean = true
     internal val grantedPermissions: MutableSet<String> = LinkedHashSet()
     internal val deniedPermissions: MutableSet<String> = LinkedHashSet()
     internal val permanentDeniedPermissions: MutableSet<String> = LinkedHashSet()
@@ -36,8 +36,8 @@ class PermissionRequestBuilder(
 
     internal var forwardPermissions: MutableSet<String> = LinkedHashSet()
 
-    fun showDialogs(showDialogs: Boolean): PermissionRequestBuilder {
-        this.showDialogs = showDialogs
+    fun displayPermissionDialogs(enablePermissionDialogs: Boolean): PermissionRequestBuilder {
+        this.enablePermissionDialogs = enablePermissionDialogs
         return this
     }
 
