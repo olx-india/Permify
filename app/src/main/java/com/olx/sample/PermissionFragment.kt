@@ -1,56 +1,43 @@
 package com.olx.sample
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.olx.permify.Permify
 import com.olx.permify.callback.PermissionCallback
+import com.olx.sample.databinding.FragmentPermissionBinding
 
 class PermissionFragment : Fragment(), PermissionCallback {
 
-    lateinit var permify: Permify
+    private lateinit var binding: FragmentPermissionBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        return inflater.inflate(R.layout.fragment_permission, container, false)
+        binding = FragmentPermissionBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize the Permify library
-        // permify = Permify()
-
-        // Find the views in the layout
-        val tvCameraPermission: TextView = view.findViewById(R.id.tv_camera_permission)
-        val tvFilePermission: TextView = view.findViewById(R.id.tv_file_permission)
-
-        // Set click listeners for the TextViews
-        tvCameraPermission.setOnClickListener {
-            // Request CAMERA permission when clicked
-//            permify.requestPermission(
-//                requireActivity(),
-//                Manifest.permission.CAMERA,
-//                this
-//            )
+        binding.tvReadPhoneStatePermission.setOnClickListener {
+            Permify.requestPermission(
+                fragment = this,
+                permissionCallback = this,
+                permissions = listOf(Manifest.permission.READ_PHONE_STATE),
+                requestMessage = "OLX needs following permissions to continue",
+                openSettingMessage = "Please allow following permissions in settings"
+            )
         }
 
-        tvFilePermission.setOnClickListener {
-            // Request WRITE_EXTERNAL_STORAGE permission when clicked
-//            permify.requestPermission(
-//                requireActivity(),
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                this
-//            )
-        }
     }
 
     override fun onResult(

@@ -1,5 +1,7 @@
 package com.olx.permify
 
+import android.Manifest
+import android.os.Build
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -14,8 +16,14 @@ import java.lang.ref.WeakReference
 class PermissionRequestBuilder(
     private val fragmentActivity: WeakReference<FragmentActivity>,
     private val fragment: WeakReference<Fragment>?,
-    internal val normalPermissions: List<String>
+    internal val normalPermissions: MutableList<String>
 ) {
+
+    init {
+        filterPermission()
+    }
+
+    internal var enablePermissionDialogs: Boolean = true
     internal val grantedPermissions: MutableSet<String> = LinkedHashSet()
     internal val deniedPermissions: MutableSet<String> = LinkedHashSet()
     internal val permanentDeniedPermissions: MutableSet<String> = LinkedHashSet()
@@ -27,6 +35,11 @@ class PermissionRequestBuilder(
     private var openSettingMessage: String? = null
 
     internal var forwardPermissions: MutableSet<String> = LinkedHashSet()
+
+    fun displayPermissionDialogs(enablePermissionDialogs: Boolean): PermissionRequestBuilder {
+        this.enablePermissionDialogs = enablePermissionDialogs
+        return this
+    }
 
     fun setPermissionRequestMessages(
         requestMessage: String,
@@ -67,7 +80,7 @@ class PermissionRequestBuilder(
         showReasonOrGoSettings: Boolean,
         permissions: List<String>,
     ) {
-        val message = if (showReasonOrGoSettings) openSettingMessage else requestMessage
+        val message = if (showReasonOrGoSettings) requestMessage else openSettingMessage
         val context = fragmentActivity.get()
         if (context != null) {
             val defaultDialog = PermissionDeniedDialog(
@@ -112,7 +125,19 @@ class PermissionRequestBuilder(
     }
 
     private fun requestPermission(permissionCallback: PermissionCallback) {
-        invisiblePermissionFragment?.requestNow(normalPermissions, permissionCallback, this)
+        invisiblePermissionFragment?.requestNow(
+            normalPermissions,
+            permissionCallback,
+            this
+        )
+    }
+
+    private fun filterPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU &&
+            Manifest.permission.POST_NOTIFICATIONS in normalPermissions
+        ) {
+            normalPermissions.remove(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     private fun forwardToSettings(permissions: List<String>) {
