@@ -1,5 +1,5 @@
 package com.olx.permify.callback
 
-interface PermissionCallback {
+interface PermissionRequestCallback {
     fun onResult(allGranted: Boolean, grantedList: List<String>, deniedList: List<String>)
 }

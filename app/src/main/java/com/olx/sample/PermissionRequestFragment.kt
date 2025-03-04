@@ -8,10 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.olx.permify.Permify
-import com.olx.permify.callback.PermissionCallback
+import com.olx.permify.callback.PermissionRequestCallback
 import com.olx.sample.databinding.FragmentPermissionBinding
 
-class PermissionFragment : Fragment(), PermissionCallback {
+class PermissionRequestFragment : Fragment(), PermissionRequestCallback {
 
     private lateinit var binding: FragmentPermissionBinding
 
@@ -31,7 +31,7 @@ class PermissionFragment : Fragment(), PermissionCallback {
         binding.tvReadPhoneStatePermission.setOnClickListener {
             Permify.requestPermission(
                 fragment = this,
-                permissionCallback = this,
+                permissionRequestCallback = this,
                 permissions = listOf(Manifest.permission.READ_PHONE_STATE),
                 requestMessage = "OLX needs following permissions to continue",
                 openSettingMessage = "Please allow following permissions in settings"
