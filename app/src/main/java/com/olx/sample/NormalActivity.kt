@@ -7,10 +7,10 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.olx.permify.Permify
-import com.olx.permify.callback.PermissionCallback
+import com.olx.permify.callback.PermissionRequestCallback
 import com.olx.sample.databinding.ActivityNormalBinding
 
-class NormalActivity : AppCompatActivity(), PermissionCallback {
+class NormalActivity : AppCompatActivity(), PermissionRequestCallback {
 
     private lateinit var binding: ActivityNormalBinding
 
@@ -30,7 +30,7 @@ class NormalActivity : AppCompatActivity(), PermissionCallback {
                 activity = this,
                 showDialogs = false,
                 permissions = listOf(Manifest.permission.POST_NOTIFICATIONS),
-                permissionCallback = object : PermissionCallback {
+                permissionRequestCallback = object : PermissionRequestCallback {
                     override fun onResult(
                         allGranted: Boolean,
                         grantedList: List<String>,
@@ -55,7 +55,7 @@ class NormalActivity : AppCompatActivity(), PermissionCallback {
                 ),
                 requestMessage = "OLX needs following permissions to continue",
                 openSettingMessage = "Please allow following permissions in settings",
-                permissionCallback = object : PermissionCallback {
+                permissionRequestCallback = object : PermissionRequestCallback {
                     override fun onResult(
                         allGranted: Boolean,
                         grantedList: List<String>,
