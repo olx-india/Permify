@@ -11,7 +11,7 @@ import com.olx.permify.Permify
 import com.olx.permify.callback.PermissionRequestCallback
 import com.olx.sample.databinding.FragmentPermissionBinding
 
-class PermissionFragment : Fragment(), PermissionRequestCallback {
+class PermissionRequestFragment : Fragment(), PermissionRequestCallback {
 
     private lateinit var binding: FragmentPermissionBinding
 
