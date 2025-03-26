@@ -13,11 +13,9 @@ import com.olx.permify.Permify
 import com.olx.permify.PermissionRequestBuilder
 import com.olx.permify.callback.PermissionRequestCallback
 
-class InvisiblePermissionFragment : Fragment() {
+class InvisiblePermissionFragment(private val permissionRequestBuilder: PermissionRequestBuilder) : Fragment() {
 
     private var permissionRequestCallback: PermissionRequestCallback? = null
-
-    private lateinit var permissionRequestBuilder: PermissionRequestBuilder
 
     private var permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
@@ -199,10 +197,8 @@ class InvisiblePermissionFragment : Fragment() {
 
     internal fun requestNow(
         permissions: List<String>,
-        permissionRequestCallback: PermissionRequestCallback?,
-        permissionRequestBuilder: PermissionRequestBuilder,
+        permissionRequestCallback: PermissionRequestCallback?
     ) {
-        this.permissionRequestBuilder = permissionRequestBuilder
         this.permissionRequestCallback = permissionRequestCallback
         val isPermissionRational = isPermissionRational(permissions)
         if (isPermissionRational.isNotEmpty()) {
@@ -227,10 +223,10 @@ class InvisiblePermissionFragment : Fragment() {
 
         private const val TAG = "PermissionFragment"
 
-        fun getInstance(fragmentManager: FragmentManager): InvisiblePermissionFragment {
+        fun getInstance(fragmentManager: FragmentManager, permissionRequestBuilder: PermissionRequestBuilder): InvisiblePermissionFragment {
             var fragment = fragmentManager.findFragmentByTag(TAG) as? InvisiblePermissionFragment
             if (fragment == null) {
-                fragment = InvisiblePermissionFragment()
+                fragment = InvisiblePermissionFragment(permissionRequestBuilder)
                 fragmentManager.beginTransaction().add(fragment, TAG)
                     .commitNowAllowingStateLoss()
             }

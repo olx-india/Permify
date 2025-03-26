@@ -87,7 +87,7 @@ class PermissionRequestBuilder(
 
     private val invisiblePermissionFragment: InvisiblePermissionFragment?
         get() {
-            return fragmentManager?.let { InvisiblePermissionFragment.getInstance(it) }
+            return fragmentManager?.let { InvisiblePermissionFragment.getInstance(it, this) }
         }
 
     fun buildAndRequest(permissionRequestCallback: PermissionRequestCallback?) {
@@ -159,8 +159,7 @@ class PermissionRequestBuilder(
     private fun requestPermission(permissionRequestCallback: PermissionRequestCallback?) {
         invisiblePermissionFragment?.requestNow(
             normalPermissions,
-            permissionRequestCallback,
-            this
+            permissionRequestCallback
         )
     }
 
