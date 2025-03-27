@@ -27,6 +27,26 @@ class NormalActivity : AppCompatActivity(), PermissionRequestCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityNormalBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.tvContactPermission.setOnClickListener {
+            Permify.requestPermission(
+                activity = this,
+                permissions = listOf(Manifest.permission.READ_PHONE_STATE),
+
+                permissionRequestCallback = object : PermissionRequestCallback {
+                    override fun onResult(
+                        allGranted: Boolean,
+                        grantedList: List<String>,
+                        deniedList: List<String>
+                    ) {
+                        Log.e(
+                            "Permify",
+                            "READ_PHONE_STATE permission status:" +
+                                    " ${if (allGranted) "Granted" else "Denied"}"
+                        )
+                    }
+                }
+            )
+        }
 
         binding.tvPostNotificationPermission.setOnClickListener {
             Permify.requestPermission(
