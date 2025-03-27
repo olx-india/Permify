@@ -1,6 +1,9 @@
 package com.olx.permify
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Build
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -45,6 +48,8 @@ class PermissionRequestBuilder(
 
     internal var forwardPermissions: MutableSet<String> = LinkedHashSet()
 
+    private var originRequestOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
     fun displayPermissionDialogs(enablePermissionDialogs: Boolean): PermissionRequestBuilder {
         this.enablePermissionDialogs = enablePermissionDialogs
         return this
@@ -87,7 +92,7 @@ class PermissionRequestBuilder(
 
     private val invisiblePermissionFragment: InvisiblePermissionFragment?
         get() {
-            return fragmentManager?.let { InvisiblePermissionFragment.getInstance(it, this) }
+            return fragmentManager?.let { InvisiblePermissionFragment.getInstance(it) }
         }
 
     fun buildAndRequest(permissionRequestCallback: PermissionRequestCallback?) {
@@ -157,9 +162,11 @@ class PermissionRequestBuilder(
     }
 
     private fun requestPermission(permissionRequestCallback: PermissionRequestCallback?) {
+        lockOrientation()
         invisiblePermissionFragment?.requestNow(
             normalPermissions,
-            permissionRequestCallback
+            permissionRequestCallback,
+            this
         )
     }
 
@@ -179,6 +186,21 @@ class PermissionRequestBuilder(
 
     fun getCallerFragmentOrActivity(): Any? {
         return fragment?.get() ?: fragmentActivity.get()
+    }
+
+    @SuppressLint("SourceLockedOrientationActivity")
+    private fun lockOrientation() {
+        fragmentActivity.get()?.let {
+            if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+                originRequestOrientation = it.requestedOrientation
+                val orientation = it.resources.configuration.orientation
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                }
+            }
+        }
     }
 
 }

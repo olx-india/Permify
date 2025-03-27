@@ -13,7 +13,7 @@ import com.olx.permify.Permify
 import com.olx.permify.PermissionRequestBuilder
 import com.olx.permify.callback.PermissionRequestCallback
 
-class InvisiblePermissionFragment() : Fragment() {
+class InvisiblePermissionFragment : Fragment() {
 
     private var permissionRequestCallback: PermissionRequestCallback? = null
 
@@ -199,7 +199,8 @@ class InvisiblePermissionFragment() : Fragment() {
 
     internal fun requestNow(
         permissions: List<String>,
-        permissionRequestCallback: PermissionRequestCallback?
+        permissionRequestCallback: PermissionRequestCallback?,
+        permissionRequestBuilder: PermissionRequestBuilder
     ) {
         this.permissionRequestBuilder = permissionRequestBuilder
         this.permissionRequestCallback = permissionRequestCallback
@@ -224,27 +225,18 @@ class InvisiblePermissionFragment() : Fragment() {
             permissionLauncher.launch(permissions.toTypedArray())
     }
 
-    private fun setPermissionRequestBuilder(permissionRequestBuilder: PermissionRequestBuilder) {
-        if (!::permissionRequestBuilder.isInitialized)
-            this.permissionRequestBuilder = permissionRequestBuilder
-    }
-
     companion object {
 
         private const val TAG = "PermissionFragment"
 
         fun getInstance(
-            fragmentManager: FragmentManager,
-            permissionRequestBuilder: PermissionRequestBuilder
+            fragmentManager: FragmentManager
         ): InvisiblePermissionFragment {
             var fragment = fragmentManager.findFragmentByTag(TAG) as? InvisiblePermissionFragment
             if (fragment == null) {
                 fragment = InvisiblePermissionFragment()
-                fragment.setPermissionRequestBuilder(permissionRequestBuilder)
                 fragmentManager.beginTransaction().add(fragment, TAG)
                     .commitNowAllowingStateLoss()
-            } else {
-                fragment.setPermissionRequestBuilder(permissionRequestBuilder)
             }
             return fragment
         }
