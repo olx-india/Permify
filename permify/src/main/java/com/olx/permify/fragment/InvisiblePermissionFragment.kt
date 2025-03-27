@@ -166,17 +166,17 @@ class InvisiblePermissionFragment() : Fragment() {
         }
     }
 
-    private fun processRationalePermissions(isPermissionRational: List<String>) {
+    private fun processRationalePermissions(permissions: List<String>, isPermissionRational: List<String>) {
         if (permissionRequestBuilder.explainReasonCallbackWithBeforeParam != null) {
             permissionRequestBuilder.explainReasonCallbackWithBeforeParam?.onRationalPermissionCallback(
                 isPermissionRational
             )
+            permissionLauncher.launch(permissions.toTypedArray())
         } else if (permissionRequestBuilder.enablePermissionDialogs) {
             permissionRequestBuilder.showHandlePermissionDialog(
                 true,
                 isPermissionRational
             )
-            return
         }
     }
 
@@ -201,12 +201,14 @@ class InvisiblePermissionFragment() : Fragment() {
         permissions: List<String>,
         permissionRequestCallback: PermissionRequestCallback?
     ) {
+        this.permissionRequestBuilder = permissionRequestBuilder
         this.permissionRequestCallback = permissionRequestCallback
         val isPermissionRational = isPermissionRational(permissions)
         if (isPermissionRational.isNotEmpty()) {
-            processRationalePermissions(isPermissionRational)
+            processRationalePermissions(permissions, isPermissionRational)
+        } else {
+            permissionLauncher.launch(permissions.toTypedArray())
         }
-        permissionLauncher.launch(permissions.toTypedArray())
     }
 
     private fun isPermissionRational(permissions: List<String>): List<String> {
@@ -223,7 +225,8 @@ class InvisiblePermissionFragment() : Fragment() {
     }
 
     private fun setPermissionRequestBuilder(permissionRequestBuilder: PermissionRequestBuilder) {
-        this.permissionRequestBuilder = permissionRequestBuilder
+        if (!::permissionRequestBuilder.isInitialized)
+            this.permissionRequestBuilder = permissionRequestBuilder
     }
 
     companion object {
@@ -240,6 +243,8 @@ class InvisiblePermissionFragment() : Fragment() {
                 fragment.setPermissionRequestBuilder(permissionRequestBuilder)
                 fragmentManager.beginTransaction().add(fragment, TAG)
                     .commitNowAllowingStateLoss()
+            } else {
+                fragment.setPermissionRequestBuilder(permissionRequestBuilder)
             }
             return fragment
         }

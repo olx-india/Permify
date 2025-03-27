@@ -11,10 +11,21 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_contact_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:text="Contact Permission"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+
+        <TextView
             android:id="@+id/tv_post_notification_permission"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/black"
+            android:layout_marginTop="30dp"
             android:padding="10dp"
             android:text="Post Notification"
             android:textColor="@color/white"
