@@ -37,6 +37,9 @@ class InvisiblePermissionFragment : Fragment() {
     }
 
     private fun handlePermissionResult(result: Map<String, Boolean>) {
+
+        if (!isPermissionRequestBuilderInitialized()) return
+
         permissionRequestBuilder.grantedPermissions.clear()
 
         val showReasonList = ArrayList<String>()  // temporary denied permissions
@@ -166,7 +169,10 @@ class InvisiblePermissionFragment : Fragment() {
         }
     }
 
-    private fun processRationalePermissions(permissions: List<String>, isPermissionRational: List<String>) {
+    private fun processRationalePermissions(
+        permissions: List<String>,
+        isPermissionRational: List<String>
+    ) {
         if (permissionRequestBuilder.explainReasonCallbackWithBeforeParam != null) {
             permissionRequestBuilder.explainReasonCallbackWithBeforeParam?.onRationalPermissionCallback(
                 isPermissionRational
@@ -221,8 +227,16 @@ class InvisiblePermissionFragment : Fragment() {
     fun requestAgain(
         permissions: List<String>,
     ) {
-        if (::permissionRequestBuilder.isInitialized)
-            permissionLauncher.launch(permissions.toTypedArray())
+        if (!isPermissionRequestBuilderInitialized()) return
+        permissionLauncher.launch(permissions.toTypedArray())
+    }
+
+    /**
+     * On some phones, PermissionBuilder can be null under unpredictable occasions such as garbage collection.
+     * Therefore, we should not proceed with any further logic if it's uninitialized.
+     */
+    private fun isPermissionRequestBuilderInitialized(): Boolean {
+        return ::permissionRequestBuilder.isInitialized
     }
 
     companion object {
