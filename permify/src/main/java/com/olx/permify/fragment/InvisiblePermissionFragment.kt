@@ -12,6 +12,9 @@ import androidx.fragment.app.FragmentManager
 import com.olx.permify.Permify
 import com.olx.permify.PermissionRequestBuilder
 import com.olx.permify.callback.PermissionRequestCallback
+import com.olx.permify.utils.LOG_TAG
+import com.olx.permify.utils.Logger
+import com.olx.permify.utils.PermissionResultReconciler
 
 class InvisiblePermissionFragment : Fragment() {
 
@@ -46,11 +49,12 @@ class InvisiblePermissionFragment : Fragment() {
         val forwardList = ArrayList<String>()  // permanent denied permissions
 
         processPermissions(result, showReasonList, forwardList)
+        updateGrantedPermissions(getDeniedPermissions())
+        revokeStaleGrantedPermissions(showReasonList, forwardList)
+        classifyMissingPermissions(showReasonList, forwardList)
         handleMediaPermissions()
 
         val deniedPermissions = getDeniedPermissions()
-        updateGrantedPermissions(deniedPermissions)
-
         val allGranted =
             permissionRequestBuilder.grantedPermissions.size == permissionRequestBuilder.normalPermissions.size
         if (allGranted) {
@@ -64,15 +68,69 @@ class InvisiblePermissionFragment : Fragment() {
             handlePermissionDialogsAndCallbacks(showReasonList, forwardList)
         }
 
-        val deniedList = ArrayList<String>()
-        deniedList.addAll(permissionRequestBuilder.deniedPermissions)
-        deniedList.addAll(permissionRequestBuilder.permanentDeniedPermissions)
-
+        val deniedList = getDeniedPermissions()
         callPermissionResultCallback(
             deniedList.isEmpty(),
             permissionRequestBuilder.grantedPermissions,
             deniedList
         )
+    }
+
+    /**
+     * PackageManager / the result map can say granted while AppOps has revoked
+     * the permission (common for CAMERA on Samsung). Demote those so callers
+     * do not start IMAGE_CAPTURE and crash.
+     */
+    private fun revokeStaleGrantedPermissions(
+        showReasonList: MutableList<String>,
+        forwardList: MutableList<String>
+    ) {
+        val revoked = PermissionResultReconciler.grantedPermissionsThatAreRevoked(
+            permissionRequestBuilder.grantedPermissions
+        ) { permission ->
+            Permify.isPermissionGranted(requireContext(), permission)
+        }
+        for (permission in revoked) {
+            Logger.w(LOG_TAG, "$permission was reported granted but is revoked")
+            permissionRequestBuilder.grantedPermissions.remove(permission)
+            classifyAsDenied(permission, showReasonList, forwardList)
+        }
+    }
+
+    /**
+     * An empty or partial result (user cancel, some OEM revoked-camera paths)
+     * used to leave denied lists empty, so [callPermissionResultCallback]
+     * reported allGranted=true and clients launched the camera.
+     */
+    private fun classifyMissingPermissions(
+        showReasonList: MutableList<String>,
+        forwardList: MutableList<String>
+    ) {
+        val missing = PermissionResultReconciler.permissionsMissingFromResult(
+            permissionRequestBuilder.normalPermissions,
+            permissionRequestBuilder.grantedPermissions,
+            permissionRequestBuilder.deniedPermissions,
+            permissionRequestBuilder.permanentDeniedPermissions
+        )
+        for (permission in missing) {
+            Logger.w(LOG_TAG, "$permission missing from permission result; treating as denied")
+            classifyAsDenied(permission, showReasonList, forwardList)
+        }
+    }
+
+    private fun classifyAsDenied(
+        permission: String,
+        showReasonList: MutableList<String>,
+        forwardList: MutableList<String>
+    ) {
+        if (shouldShowRequestPermissionRationale(permission)) {
+            showReasonList.add(permission)
+            permissionRequestBuilder.deniedPermissions.add(permission)
+        } else {
+            forwardList.add(permission)
+            permissionRequestBuilder.permanentDeniedPermissions.add(permission)
+            permissionRequestBuilder.deniedPermissions.remove(permission)
+        }
     }
 
     private fun callPermissionResultCallback(
@@ -109,15 +167,7 @@ class InvisiblePermissionFragment : Fragment() {
                 permissionRequestBuilder.deniedPermissions.remove(permission)
                 permissionRequestBuilder.permanentDeniedPermissions.remove(permission)
             } else {
-                val shouldShowRationale = shouldShowRequestPermissionRationale(permission)
-                if (shouldShowRationale) {
-                    showReasonList.add(permission)
-                    permissionRequestBuilder.deniedPermissions.add(permission)
-                } else {
-                    forwardList.add(permission)
-                    permissionRequestBuilder.permanentDeniedPermissions.add(permission)
-                    permissionRequestBuilder.deniedPermissions.remove(permission)
-                }
+                classifyAsDenied(permission, showReasonList, forwardList)
             }
         }
     }
