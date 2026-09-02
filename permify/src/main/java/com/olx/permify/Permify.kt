@@ -1,10 +1,9 @@
 package com.olx.permify
 
 import android.content.Context
-import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.olx.permify.callback.PermanentPermissionDeniedCallback
@@ -82,10 +81,16 @@ object Permify {
         return NotificationManagerCompat.from(context).areNotificationsEnabled()
     }
 
+    /**
+     * True only when the permission is granted by PackageManager and not revoked
+     * by AppOps. [androidx.core.content.ContextCompat.checkSelfPermission] can
+     * return GRANTED while CAMERA AppOps is revoked, which then crashes
+     * `IMAGE_CAPTURE` with SecurityException on Samsung / Android 14+.
+     */
     fun isPermissionGranted(context: Context, permission: String): Boolean {
-        return ContextCompat.checkSelfPermission(
+        return PermissionChecker.checkSelfPermission(
             context, permission
-        ) == PackageManager.PERMISSION_GRANTED
+        ) == PermissionChecker.PERMISSION_GRANTED
     }
 
     fun isPermissionTemporarilyDenied(activity: FragmentActivity, permission: String): Boolean {
