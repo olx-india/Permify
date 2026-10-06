@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
 }
 
-group = "com.github.olx-india"
+group = "com.olx-india"
 version = libs.versions.permify.get()
 
 android {
