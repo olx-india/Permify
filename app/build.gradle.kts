@@ -9,11 +9,9 @@ android {
 
     defaultConfig {
         applicationId = "com.olx.sample"
-        minSdk = 24
+        minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-
+        version = libs.versions.permify.get()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,7 +35,7 @@ android {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(JavaVersion.VERSION_21.toString().toInt())
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
     }
